@@ -15,14 +15,18 @@ from typing import List, Dict
 load_dotenv(override=True)
 
 def push(text):
-    requests.post(
-        "https://api.pushover.net/1/messages.json",
-        data={
-            "token": os.getenv("PUSHOVER_TOKEN"),
-            "user": os.getenv("PUSHOVER_USER"),
-            "message": text,
-        }
-    )
+    try:
+        requests.post(
+            "https://api.pushover.net/1/messages.json",
+            data={
+                "token": os.getenv("PUSHOVER_TOKEN"),
+                "user": os.getenv("PUSHOVER_USER"),
+                "message": text,
+            },
+            timeout=3.0
+        )
+    except Exception as e:
+        print(f"Failed to send Pushover alert: {e}", flush=True)
 
 
 def record_user_details(email, name="Name not provided", notes="not provided"):
