@@ -52,8 +52,16 @@ const css = `
     font-family: var(--mono);
     font-size: 0.9rem;
     font-weight: 700;
-    color: var(--violet-light);
     letter-spacing: 0.05em;
+  }
+  .nav-logo a {
+    text-decoration: none;
+    color: var(--violet-light);
+    transition: filter 0.25s, opacity 0.25s;
+  }
+  .nav-logo a:hover {
+    filter: brightness(1.15);
+    opacity: 0.9;
   }
 
   .nav-links {
@@ -1456,7 +1464,11 @@ export default function App() {
 
       {/* Nav */}
       <nav>
-        <div className="nav-logo">{'<TylerLammey />'}</div>
+        <div className="nav-logo">
+          <a href="#agent" onClick={(e) => { e.preventDefault(); scrollTo("agent"); }}>
+            {'<TylerLammey />'}
+          </a>
+        </div>
         <ul className="nav-links">
           <li><a href="#agent" onClick={(e) => { e.preventDefault(); scrollTo("agent"); }}>AI Agent</a></li>
           <li><a href="#projects" onClick={(e) => { e.preventDefault(); scrollTo("projects"); }}>Projects</a></li>
