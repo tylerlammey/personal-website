@@ -323,7 +323,6 @@ const css = `
     padding: 0.75rem 1.25rem;
     max-width: 75%;
     word-break: break-word;
-    white-space: pre-wrap;
   }
   .msg-bubble.assistant p {
     margin: 0 0 0.75rem 0;
@@ -776,7 +775,10 @@ const css = `
     height: calc(100% + 0.5rem);
     background: var(--border);
   }
-  .timeline-item:last-child::after { display: none; }
+  .timeline-item:last-child::after {
+    height: 100%;
+    background: var(--border);
+  }
 
   .timeline-role {
     font-size: 0.88rem;
@@ -951,12 +953,6 @@ const EDUCATION = [
     date: "2023 – 2027",
     desc: "GPA: 3.82 · Dean's List · RPISEC (Cybersecurity), RPai (Artificial Intelligence), Quantum Computing Club.",
   },
-  {
-    role: "High School Diploma",
-    org: "Ridgewood High School",
-    date: "2019 – 2023",
-    desc: "Ridgewood, NJ",
-  },
 ];
 
 const SKILLS = [
@@ -968,25 +964,13 @@ const SKILLS = [
 
 const SUGGESTED = [
   "What are your strongest technical skills?",
-  "Tell me about your Raytheon internship.",
+  "Tell me about your SRC internship.",
   "What projects have you built?",
   "Where do you go to school?",
 ];
 
-const SYSTEM_PROMPT = `You are an AI assistant acting as a personal portfolio agent for Tyler Lammey.
-You answer questions about Tyler's background, skills, experience, and projects in a friendly, concise, and professional way.
-Keep answers under 4 sentences unless a detailed breakdown is explicitly requested.
-
-Key facts about Tyler:
-- Radar Systems Engineering Intern at Raytheon (Present - Note: this role is ongoing and has no project details or accomplishments yet. Do not transpose details from past roles here)
-- Junior Computer and Systems Engineering student at RPI (GPA 3.82)
-- Strong in Python, C++, MATLAB, FastAPI, React/Angular, Embedded Systems, RF/Radar automation (previous roles only)
-- Previous internships at Scientific Research Corporation (Radar intern) and Advanced Technologies and Services (Software intern)
-- Active in RPISEC and RPai clubs
-- Holds an active Secret Security Clearance`;
-
 // ─── Chat Component ────────────────────────────────────────────────────────────
-function ChatWindow() {
+function ChatWindow({ pendingPrompt, onPromptSent }) {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -1111,6 +1095,17 @@ function ChatWindow() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (pendingPrompt) {
+      setInput(pendingPrompt);
+      onPromptSent();
+    }
+  }, [pendingPrompt, onPromptSent]);
+
+  useEffect(() => {
+    autoResize();
+  }, [input]);
 
   const handleKey = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -1457,6 +1452,7 @@ function InteractiveGrid() {
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const [pendingPrompt, setPendingPrompt] = useState(null);
 
   return (
     <>
@@ -1503,16 +1499,13 @@ export default function App() {
 
           <div className="suggested-prompts">
             {SUGGESTED.map((s) => (
-              <button key={s} className="prompt-chip" onClick={() => {
-                document.querySelector(".chat-textarea").value = s;
-                document.querySelector(".chat-textarea").dispatchEvent(new Event("input", { bubbles: true }));
-              }}>
+              <button key={s} className="prompt-chip" onClick={() => setPendingPrompt(s)}>
                 {s}
               </button>
             ))}
           </div>
 
-          <ChatWindow />
+          <ChatWindow pendingPrompt={pendingPrompt} onPromptSent={() => setPendingPrompt(null)} />
         </div>
       </section>
 
