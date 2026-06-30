@@ -1,0 +1,17 @@
+# Local environment variables (OpenAI keys, etc.)
+.env
+backend/.env
+**/.env
+.env*.local
+
+# Node dependencies and build folders
+node_modules/
+dist/
+.eslintcache
+
+# Python virtual environment and caching
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
