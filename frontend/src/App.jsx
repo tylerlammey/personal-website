@@ -58,6 +58,7 @@ const css = `
 
   .nav-links {
     display: flex;
+    align-items: center;
     gap: 2rem;
     list-style: none;
   }
@@ -72,6 +73,22 @@ const css = `
     transition: color 0.2s;
   }
   .nav-links a:hover { color: var(--violet-light); }
+
+  .nav-separator {
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 0.82rem;
+    pointer-events: none;
+    user-select: none;
+  }
+  .nav-icon-link {
+    display: flex;
+    align-items: center;
+    color: var(--muted) !important;
+    transition: color 0.2s;
+  }
+  .nav-icon-link:hover {
+    color: var(--violet-light) !important;
+  }
 
   /* ── Sections ── */
   section {
@@ -834,12 +851,39 @@ const css = `
   footer {
     position: relative;
     z-index: 1;
-    text-align: center;
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     border-top: 1px solid var(--border);
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--muted);
-    font-family: var(--mono);
+    font-family: var(--sans);
+    background: rgba(10, 10, 15, 0.4);
+  }
+  .footer-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .footer-link {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-link:hover {
+    color: var(--violet-light);
+  }
+  .footer-dot {
+    color: rgba(255, 255, 255, 0.15);
+    user-select: none;
   }
 `;
 
@@ -1417,6 +1461,22 @@ export default function App() {
           <li><a href="#agent" onClick={(e) => { e.preventDefault(); scrollTo("agent"); }}>AI Agent</a></li>
           <li><a href="#projects" onClick={(e) => { e.preventDefault(); scrollTo("projects"); }}>Projects</a></li>
           <li><a href="#resume" onClick={(e) => { e.preventDefault(); scrollTo("resume"); }}>Resume</a></li>
+          <li className="nav-separator">|</li>
+          <li>
+            <a href="https://github.com/tylerlammey" target="_blank" rel="noopener noreferrer" title="GitHub" className="nav-icon-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"></path></svg>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/in/tyler-lammey" target="_blank" rel="noopener noreferrer" title="LinkedIn" className="nav-icon-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </a>
+          </li>
+          <li>
+            <a href="mailto:tylerlammey@gmail.com" title="Email" className="nav-icon-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+          </li>
         </ul>
       </nav>
 
@@ -1532,7 +1592,18 @@ export default function App() {
       </section>
 
       <footer>
-        Built with React · Powered by ChatGPT · {new Date().getFullYear()}
+        <div className="footer-content">
+          <div className="footer-left">
+            Built with React · Powered by TylerGPT · {new Date().getFullYear()}
+          </div>
+          <div className="footer-right">
+            <a href="mailto:tylerlammey@gmail.com" className="footer-link">tylerlammey@gmail.com</a>
+            <span className="footer-dot">·</span>
+            <a href="https://github.com/tylerlammey" target="_blank" rel="noopener noreferrer" className="footer-link">GitHub</a>
+            <span className="footer-dot">·</span>
+            <a href="https://www.linkedin.com/in/tyler-lammey" target="_blank" rel="noopener noreferrer" className="footer-link">LinkedIn</a>
+          </div>
+        </div>
       </footer>
     </>
   );
