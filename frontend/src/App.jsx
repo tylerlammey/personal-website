@@ -31,18 +31,7 @@ const css = `
     overflow-x: hidden;
   }
 
-  /* grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+
 
   /* ── Nav ── */
   nav {
@@ -1178,6 +1167,240 @@ function ChatWindow() {
   );
 }
 
+function InteractiveGrid() {
+  const canvasRef = useRef(null);
+  const mouse = useRef({ x: -1000, y: -1000 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animationFrameId;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const spacing = 45;
+    let cols = Math.ceil(width / spacing) + 1;
+    let rows = Math.ceil(height / spacing) + 1;
+    let nodes = [];
+
+    // Detect mobile or touch-only devices to save CPU/battery and avoid layout conflicts
+    const checkIsMobile = () =>
+      window.innerWidth <= 768 ||
+      ("ontouchstart" in window) ||
+      navigator.maxTouchPoints > 0;
+    let isMobile = checkIsMobile();
+
+    const initNodes = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      cols = Math.ceil(width / spacing) + 1;
+      rows = Math.ceil(height / spacing) + 1;
+      isMobile = checkIsMobile();
+
+      nodes = [];
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          nodes.push({
+            baseX: x * spacing,
+            baseY: y * spacing,
+            x: x * spacing,
+            y: y * spacing,
+            col: x,
+            row: y,
+          });
+        }
+      }
+    };
+
+    initNodes();
+
+    const drawStatic = () => {
+      ctx.clearRect(0, 0, width, height);
+      ctx.strokeStyle = "rgba(124, 58, 237, 0.055)"; // Keep base grid visible on mobile
+      ctx.lineWidth = 1;
+
+      // Draw horizontal lines
+      for (let r = 0; r < rows; r++) {
+        ctx.beginPath();
+        ctx.moveTo(0, r * spacing);
+        ctx.lineTo(width, r * spacing);
+        ctx.stroke();
+      }
+
+      // Draw vertical lines
+      for (let c = 0; c < cols; c++) {
+        ctx.beginPath();
+        ctx.moveTo(c * spacing, 0);
+        ctx.lineTo(c * spacing, height);
+        ctx.stroke();
+      }
+    };
+
+    const handleResize = () => {
+      initNodes();
+      if (isMobile) {
+        drawStatic();
+      }
+    };
+
+    const handleMouseMove = (e) => {
+      if (isMobile) return;
+      mouse.current.x = e.clientX;
+      mouse.current.y = e.clientY;
+    };
+
+    const handleMouseLeave = () => {
+      if (isMobile) return;
+      mouse.current.x = -1000;
+      mouse.current.y = -1000;
+    };
+
+    window.addEventListener("resize", handleResize);
+    if (!isMobile) {
+      window.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseleave", handleMouseLeave);
+    }
+
+    const draw = () => {
+      if (isMobile) {
+        drawStatic();
+        return;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Update node positions
+      const radius = 130;
+      const strength = 22;
+
+      nodes.forEach((node) => {
+        const dx = mouse.current.x - node.baseX;
+        const dy = mouse.current.y - node.baseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        let targetX = node.baseX;
+        let targetY = node.baseY;
+
+        const isBoundary =
+          node.col === 0 ||
+          node.col === cols - 1 ||
+          node.row === 0 ||
+          node.row === rows - 1;
+
+        if (!isBoundary && dist < radius) {
+          const force = (radius - dist) / radius;
+          const distRatio = Math.sin(force * Math.PI / 2);
+          const pull = distRatio * strength;
+          const angle = Math.atan2(dy, dx);
+          // Pull points inwards towards the cursor
+          targetX = node.baseX + Math.cos(angle) * pull;
+          targetY = node.baseY + Math.sin(angle) * pull;
+        }
+
+        // Smooth springy movement
+        node.x += (targetX - node.x) * 0.12;
+        node.y += (targetY - node.y) * 0.12;
+      });
+
+      // Create radial gradient for glowing lines around the mouse
+      const grad = ctx.createRadialGradient(
+        mouse.current.x,
+        mouse.current.y,
+        0,
+        mouse.current.x,
+        mouse.current.y,
+        220
+      );
+      grad.addColorStop(0, "rgba(124, 58, 237, 0.28)");
+      grad.addColorStop(0.5, "rgba(124, 58, 237, 0.11)");
+      grad.addColorStop(1, "rgba(124, 58, 237, 0.055)");
+
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1;
+
+      // Draw horizontal lines (using quadratic curves for fluid/smooth bending)
+      for (let r = 0; r < rows; r++) {
+        ctx.beginPath();
+        const rowStartIndex = r * cols;
+        const firstNode = nodes[rowStartIndex];
+        if (firstNode) {
+          ctx.moveTo(firstNode.x, firstNode.y);
+          for (let c = 1; c < cols - 1; c++) {
+            const node = nodes[rowStartIndex + c];
+            const nextNode = nodes[rowStartIndex + c + 1];
+            if (node && nextNode) {
+              const xc = (node.x + nextNode.x) / 2;
+              const yc = (node.y + nextNode.y) / 2;
+              ctx.quadraticCurveTo(node.x, node.y, xc, yc);
+            }
+          }
+          const lastNode = nodes[rowStartIndex + cols - 1];
+          if (lastNode) {
+            ctx.lineTo(lastNode.x, lastNode.y);
+          }
+          ctx.stroke();
+        }
+      }
+
+      // Draw vertical lines (using quadratic curves for fluid/smooth bending)
+      for (let c = 0; c < cols; c++) {
+        ctx.beginPath();
+        const firstNode = nodes[c];
+        if (firstNode) {
+          ctx.moveTo(firstNode.x, firstNode.y);
+          for (let r = 1; r < rows - 1; r++) {
+            const node = nodes[r * cols + c];
+            const nextNode = nodes[(r + 1) * cols + c];
+            if (node && nextNode) {
+              const xc = (node.x + nextNode.x) / 2;
+              const yc = (node.y + nextNode.y) / 2;
+              ctx.quadraticCurveTo(node.x, node.y, xc, yc);
+            }
+          }
+          const lastNode = nodes[(rows - 1) * cols + c];
+          if (lastNode) {
+            ctx.lineTo(lastNode.x, lastNode.y);
+          }
+          ctx.stroke();
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    if (isMobile) {
+      drawStatic();
+    } else {
+      draw();
+    }
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position: "fixed",
+        inset: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 0,
+        pointerEvents: "none",
+        background: "transparent",
+      }}
+    />
+  );
+}
+
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -1185,6 +1408,7 @@ export default function App() {
   return (
     <>
       <style>{css}</style>
+      <InteractiveGrid />
 
       {/* Nav */}
       <nav>
