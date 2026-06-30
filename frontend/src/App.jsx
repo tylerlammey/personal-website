@@ -967,6 +967,7 @@ const SUGGESTED = [
   "Tell me about your SRC internship.",
   "What projects have you built?",
   "Where do you go to school?",
+  "Tell me about your time at ATS.",
 ];
 
 // ─── Chat Component ────────────────────────────────────────────────────────────
