@@ -292,20 +292,21 @@ const css = `
   }
 
   .msg-avatar {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 2px;
+    margin-top: 6px;
   }
 
   .msg-avatar.assistant {
-    background: #10a37f;
-    color: #fff;
-    padding: 5px;
+    background: transparent;
+    padding: 0;
+    object-fit: cover;
+    margin-right: -8px;
   }
   .msg-avatar.user {
     display: none;
@@ -1143,8 +1144,34 @@ function ChatWindow({ pendingPrompt, onPromptSent }) {
           <div key={i} className={`msg-row ${m.role}`}>
             {m.role === "assistant" && (
               <div className="msg-avatar assistant">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M21.3 10.92c.16-.54.12-1.12-.11-1.63a3.17 3.17 0 00-1.57-1.62c-.17-.08-.34-.14-.52-.18v-.03a3.17 3.17 0 00-2.31-3.07 3.18 3.18 0 00-3.32 1.34c-.11.16-.2.34-.27.52H13.2a3.16 3.16 0 00-3.06-2.3 3.18 3.18 0 00-2.95 2.1c-.08.24-.12.49-.12.75v.06a3.17 3.17 0 00-2.14 1.77 3.17 3.17 0 00.37 3.3c.12.16.27.3.43.42V14a3.17 3.17 0 001.76 2.85c.16.08.33.15.51.2v.03a3.17 3.17 0 003 2.94 3.18 3.18 0 003.1-2.22c.08-.24.12-.49.12-.75v-.06a3.17 3.17 0 002.32-3.08v-.03c.53-.16 1-.49 1.33-.94a3.17 3.17 0 00.35-3.31 3.14 3.14 0 00-.4-.46zm-8.8 6.48v-2.07c0-.18-.07-.36-.2-.49a.69.69 0 00-.97 0l-1.46 1.46a1.79 1.79 0 01-2.54 0 1.79 1.79 0 010-2.53l1.46-1.47a.69.69 0 000-.97.69.69 0 00-.97 0l-1.46 1.47a3.18 3.18 0 000 4.5 3.17 3.17 0 004.5 0v-.47zm-1.64-5.32l1.64 1.64-1.64 1.64-1.64-1.64 1.64-1.64zm6.98 1.46l-1.46-1.46a.69.69 0 00-.97 0 .69.69 0 00-.2.49v2.07l-.46.46a3.17 3.17 0 000 4.5 3.17 3.17 0 004.5 0 3.18 3.18 0 000-4.5l-1.41-1.56zM8.56 8.56a1.79 1.79 0 012.53 0l1.47 1.46a.69.69 0 00.97-1l-1.47-1.46a3.18 3.18 0 00-4.5 0 3.17 3.17 0 000 4.5l.47-.46V9.53a.69.69 0 00-.2-.49.69.69 0 00-.97 0zM15.44 14v1.59c.16.11.34.2.53.27l1.46-1.46a1.79 1.79 0 01-2.54 0 1.79 1.79 0 010 2.53l-1.46 1.47a.69.69 0 00.97.97l1.46-1.47a3.18 3.18 0 000-4.5 3.17 3.17 0 00-4.5 0v-.47a.69.69 0 00-.2-.49c-.27-.27-.7-.27-.97 0l-1.46 1.46v-1.59a.69.69 0 00-.69-.69H14zm-5.46-2.07c0-.18.07-.36.2-.49l1.46-1.46a1.79 1.79 0 012.54 0 1.79 1.79 0 010 2.53l-1.46 1.47a.69.69 0 00.97.97l1.46-1.47a3.18 3.18 0 000-4.5 3.17 3.17 0 00-4.5 0v.47z" fill="currentColor" />
+                <svg width="36" height="36" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="14" cy="14" r="13" fill="url(#avatarGlow)" opacity="0.15" />
+                  <circle cx="14" cy="14" r="12" fill="url(#avatarBgGrad)" stroke="url(#avatarBorderGrad)" strokeWidth="1.2" />
+                  <path d="M 6.5 23 C 6.5 19 9.5 17.5 14 17.5 C 18.5 17.5 21.5 19 21.5 23" stroke="url(#avatarIconGrad)" strokeWidth="1.5" strokeLinecap="round" />
+                  <rect x="10.5" y="8" width="7" height="8" rx="3.5" fill="url(#avatarBgGrad)" stroke="url(#avatarIconGrad)" strokeWidth="1.5" />
+                  <path d="M 14 15.5 V 17.5" stroke="url(#avatarIconGrad)" strokeWidth="1.5" />
+                  <path d="M 11.5 11.5 H 16.5" stroke="#A78BFA" strokeWidth="1.2" strokeLinecap="round" />
+                  <path d="M 14 8 V 5.5" stroke="url(#avatarIconGrad)" strokeWidth="1" />
+                  <circle cx="14" cy="4.5" r="1" fill="#A78BFA" />
+                  <defs>
+                    <radialGradient id="avatarGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#7C3AED" />
+                      <stop offset="100%" stopColor="#7C3AED" stopOpacity="0" />
+                    </radialGradient>
+                    <linearGradient id="avatarBgGrad" x1="0" y1="0" x2="28" y2="28">
+                      <stop offset="0%" stopColor="#1E1235" />
+                      <stop offset="100%" stopColor="#0F091D" />
+                    </linearGradient>
+                    <linearGradient id="avatarBorderGrad" x1="0" y1="0" x2="28" y2="28">
+                      <stop offset="0%" stopColor="#A78BFA" />
+                      <stop offset="50%" stopColor="#7C3AED" />
+                      <stop offset="100%" stopColor="#4C1D95" />
+                    </linearGradient>
+                    <linearGradient id="avatarIconGrad" x1="6" y1="5" x2="22" y2="23">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="100%" stopColor="#C0A8FF" />
+                    </linearGradient>
+                  </defs>
                 </svg>
               </div>
             )}
