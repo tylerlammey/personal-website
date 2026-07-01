@@ -1,259 +1,139 @@
-# Deployment Guide: tylerlammey.com
+# Production Deployment Guide: tylerlammey.com
 
-This guide explains how to deploy your personal portfolio website (React frontend and FastAPI backend) to a production server, connect your custom domain `tylerlammey.com`, set up environment variables securely, and manage costs.
+This guide details the production deployment architecture and step-by-step configuration for **tylerlammey.com**. 
 
----
-
-## 1. Readiness Assessment
-
-Is the website ready for deployment? **Yes, the codebase is structurally ready.**
-- **No Database Dependency:** The backend uses OpenAI and Pushover notifications to record user submissions rather than a database (e.g., PostgreSQL). This makes deployment significantly easier and cheaper.
-- **Environment Variables:** The backend reads keys (`OPENAI_API_KEY`, `PUSHOVER_USER`, `PUSHOVER_TOKEN`) from the environment, and the frontend resolves the backend URL dynamically using `import.meta.env.VITE_API_URL`.
-- **CORS Configured:** The FastAPI backend is configured with CORS middleware, which is required when serving frontend and backend from different origins.
+The website uses a decoupled architecture with a static React frontend hosted on **Vercel** and a FastAPI backend running on **Railway**, unified under a custom domain name.
 
 ---
 
-## 2. Deployment Architecture Options
+## 1. System Architecture
 
-There are two primary ways to deploy your website. 
+To optimize performance, scalability, and costs, the frontend and backend are hosted on separate, specialized platforms:
 
-### Option A: Separate Hosting (Highly Recommended)
-Deploy the React frontend as static files to a specialized CDN, and deploy the Python backend to a cloud application platform.
+```mermaid
+graph TD
+    Client[User Browser]
+    DNS[DNS Registrar]
+    Vercel[Vercel Global CDN<br>React Frontend]
+    Railway[Railway Cloud Container<br>FastAPI Backend]
+    OpenAI[OpenAI API<br>gpt-4o-mini]
+    Pushover[Pushover Notification API]
 
-*   **Frontend Host:** Vercel, Netlify, or Cloudflare Pages.
-*   **Backend Host:** Render, Railway, or Fly.io.
-*   **How it works:**
-    *   Vercel compiles your frontend code into static HTML/CSS/JS and serves it globally with extreme speed.
-    *   Render/Railway runs your Python app in a virtual container and exposes a public URL (e.g., `https://backend.onrender.com`).
-    *   Your domain `tylerlammey.com` points to the frontend host, and a subdomain like `api.tylerlammey.com` points to the backend host.
-*   **Pros:** Very easy to configure, automatic Git-based deploys (pushes to `main` deploy instantly), high performance, and generous free/low-cost tiers.
-*   **Cons:** Backend "free" tiers (like Render's Free Web Service) will "sleep" after 15 minutes of inactivity. The first user to visit the site after a sleep will experience a 50-second delay for the AI assistant to respond ("cold start").
+    Client -->|DNS Lookup: tylerlammey.com| DNS
+    Client -->|DNS Lookup: api.tylerlammey.com| DNS
+    Client -->|Load Static Assets| Vercel
+    Client -->|Stream Chat Requests| Railway
+    Railway -->|Retrieve AI Completions| OpenAI
+    Railway -->|Send Lead & Feedback Alerts| Pushover
+```
 
-### Option B: Single Virtual Private Server (VPS)
-Deploy both the frontend and backend on a single virtual server (e.g., a DigitalOcean Droplet, Linode, or Hetzner VPS).
-
-*   **Host:** DigitalOcean, Linode, Hetzner, or AWS LightSail.
-*   **How it works:**
-    *   You rent a basic Linux server (Ubuntu).
-    *   You configure **Nginx** (a web server) to run on the VPS.
-    *   Nginx is configured to serve your React frontend files directly when someone visits `tylerlammey.com`.
-    *   Nginx is also configured as a "reverse proxy" to forward any request to `tylerlammey.com/api` directly to your FastAPI backend running in the background on port `8000`.
-*   **Pros:**
-    *   No backend "cold starts" (always active).
-    *   Single domain setup (`tylerlammey.com` hosts everything, eliminating cross-origin CORS concerns).
-    *   Very cheap and predictable pricing (flat monthly fee).
-*   **Cons:** Requires manual Linux administration (setting up Git, installing Python/Node, configuring systemd services to keep processes running, setting up SSL certificates via Certbot, and securing the server).
+### Components
+1. **Frontend (Vercel)**: Compiles the React (Vite) application and serves the static HTML/CSS/JS globally via an optimized Edge CDN.
+2. **Backend (Railway)**: Runs the FastAPI server in a virtualized Docker container, handling real-time OpenAI streaming completions and logging.
+3. **Integrations**:
+   - **OpenAI API**: Powers the streaming chat engine (TylerGPT).
+   - **Pushover API**: Sends real-time notifications when a user submits contact info or when TylerGPT cannot answer a query.
 
 ---
 
-## 3. Cost Breakdown
+## 2. Infrastructure Setup & Deployment
 
-| Component | Host / Provider | Option A (Separate) Cost | Option B (Single VPS) Cost |
-| :--- | :--- | :--- | :--- |
-| **Domain Registration** | Namecheap, Porkbun, Cloudflare | **~$10 - $14 / year** | **~$10 - $14 / year** |
-| **Frontend Hosting** | Vercel or Netlify | **$0 / month** (Free tier) | Included in VPS |
-| **Backend Hosting** | Render or Railway | **$0 / month** (Free, with cold starts)<br>**$7 / month** (Hobby, no sleep) | **$4 - $6 / month** (DigitalOcean / Hetzner) |
-| **SSL/HTTPS Certificate** | Let's Encrypt | **$0** (Automatic) | **$0** (Configured via Certbot) |
-| **Total Estimated Cost** | — | **~$12/year** (Strictly free hosts)<br>or **~$12/year + $7/month** | **~$12/year + $4-$6/month** (~$72/year total) |
+### Step 1: Deploy the FastAPI Backend to Railway
 
----
+Railway automatically detects Python code repositories, installs requirements, and exposes a containerized service.
 
-## 4. Step-by-Step Deployment Instructions
+1. Log into your [Railway Dashboard](https://railway.app).
+2. Click **New Project** > **Deploy from GitHub repo** and select your repository.
+3. Once the repository is imported, click on the backend service card to configure its settings:
+   - **Root Directory**: `backend`
+   - **Custom Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT` (Railway provides the `$PORT` environment variable dynamically).
+4. Navigate to the **Variables** tab and add the production credentials:
+   - `OPENAI_API_KEY`: *[Your OpenAI API Key]*
+   - `PUSHOVER_USER`: *[Your Pushover User Key]*
+   - `PUSHOVER_TOKEN`: *[Your Pushover App/API Token]*
+   - `ALLOWED_ORIGINS`: `https://tylerlammey.com,https://www.tylerlammey.com` (Secures your backend so only requests originating from your portfolio site are allowed).
+5. Under **Settings** > **Domains**, Railway will provide a default domain (e.g., `https://backend-production.up.railway.app`). Keep this URL handy for the frontend step.
 
-### Phase 1: Purchase the Domain
-1. Go to a domain registrar (recommendations: **Porkbun**, **Cloudflare Registrar**, or **Namecheap**).
-2. Search for and buy `tylerlammey.com`.
+### Step 2: Deploy the React Frontend to Vercel
 
----
+Vercel builds and hosts React apps out of the box with Git-based triggers.
 
-### Phase 2: Deploying via Option A (Separate Hosting - Recommended)
-
-#### Step 1: Deploy the Backend (e.g., Render)
-1. Create a free account on [Render](https://render.com).
-2. Click **New +** and select **Web Service**.
-3. Connect your GitHub repository.
-4. Configure the Web Service settings:
-   * **Name:** `tylerlammey-backend`
-   * **Region:** Choose the one closest to you (e.g., US East).
-   * **Branch:** `main`
-   * **Root Directory:** `backend`
-   * **Runtime:** `Python`
-   * **Build Command:** `pip install -r requirements.txt`
-   * **Start Command:** `uvicorn app:app --host 0.0.0.0 --port $PORT`
-   * **Instance Type:** `Free` (or `Hobby` at $7/month to prevent sleep)
-5. Add your Environment Variables in the **Environment** tab:
-   * `OPENAI_API_KEY` = *[Your OpenAI Key]*
-   * `PUSHOVER_USER` = *[Your Pushover User Key]*
-   * `PUSHOVER_TOKEN` = *[Your Pushover App Token]*
-6. Click **Deploy Web Service**.
-7. Once successfully deployed, Render will give you a public URL like `https://tylerlammey-backend.onrender.com`. Copy this URL.
-
-#### Step 2: Deploy the Frontend (e.g., Vercel)
-1. Create a free account on [Vercel](https://vercel.com).
-2. Click **Add New** > **Project** and import your GitHub repository.
-3. Configure the Project settings:
-   * **Framework Preset:** `Vite` (should be auto-detected)
-   * **Root Directory:** `frontend`
+1. Log into your [Vercel Dashboard](https://vercel.com).
+2. Click **Add New** > **Project** and select your GitHub repository.
+3. Configure the deployment settings:
+   - **Framework Preset**: `Vite` (automatically detected)
+   - **Root Directory**: `frontend`
 4. Expand **Environment Variables** and add:
-   * **Key:** `VITE_API_URL`
-   * **Value:** `https://tylerlammey-backend.onrender.com` (Use the backend URL you copied from Step 1, with *no* trailing slash)
-5. Click **Deploy**. Vercel will build and host your site, giving you a temporary Vercel subdomain.
-
-#### Step 3: Link Your Custom Domain
-1. In Vercel, go to your project **Settings** > **Domains**.
-2. Enter `tylerlammey.com` and click **Add**.
-3. Vercel will show you the DNS records you need to add to your Domain Registrar.
-4. Log into your Domain Registrar (Porkbun/Namecheap) and go to DNS settings. Add:
-   * An **A record** pointing `@` to Vercel's IP address.
-   * A CNAME record pointing `www` to `cname.vercel-dns.com`.
-5. Pointing your backend subdomain: If you want your backend on `api.tylerlammey.com`:
-   * Go to Render > your web service > **Settings** > **Custom Domains**.
-   * Add `api.tylerlammey.com`.
-   * Add a **CNAME record** in your registrar pointing `api` to `tylerlammey-backend.onrender.com`.
+   - **Key**: `VITE_API_URL`
+   - **Value**: `https://api.tylerlammey.com` (The subdomain where the backend will live, with *no* trailing slash).
+5. Click **Deploy**. Vercel will compile the site and generate a temporary `.vercel.app` URL.
 
 ---
 
-### Phase 3: Deploying via Option B (Single VPS Hosting)
+## 3. Custom Domain & DNS Settings
 
-If you prefer to run both on a single Linux server ($4-$6/mo) to avoid cold starts and keep everything under a single domain:
+To map the custom domain `tylerlammey.com` and its subdomain `api.tylerlammey.com`, configure the records below in your domain registrar (e.g., Porkbun, Namecheap, Cloudflare).
 
-#### Step 1: Create a VPS
-1. Sign up for a cloud provider (e.g., DigitalOcean, Hetzner, or Vultr).
-2. Create a virtual machine (often called a "Droplet" or "Instance").
-   * Choose **Ubuntu (latest LTS version)**.
-   * Choose the cheapest plan (e.g., 1GB RAM, 1 vCPU - approx. $4 - $6/month).
-3. Connect your domain: In your registrar's DNS settings, point an **A record** for `@` and `www` to your VPS's public IP address.
+### DNS Record Requirements
 
-#### Step 2: Server Configuration (via SSH Terminal)
-Connect to your server: `ssh root@your_vps_ip`.
+| Type | Host | Value / Target | Description |
+| :--- | :--- | :--- | :--- |
+| **A** | `@` | `76.76.21.21` | Points the base apex domain to Vercel's global IP |
+| **CNAME** | `www` | `cname.vercel-dns.com` | Points the WWW subdomain to Vercel's Edge routing |
+| **CNAME** | `api` | `[your-backend-id].up.railway.app` | Points the backend subdomain to your Railway container |
 
-1. **Update packages and install dependencies:**
-   ```bash
-   sudo apt update && sudo apt upgrade -y
-   sudo apt install git python3-pip python3-venv nginx -y
-   ```
+### Custom Domain Configuration
 
-2. **Clone the repository:**
-   ```bash
-   cd /var/www
-   sudo git clone https://github.com/tylerlammey/personal-website.git
-   sudo chown -R $USER:$USER /var/www/personal-website
-   ```
+#### 1. In Vercel (Frontend)
+1. Go to your Vercel project dashboard, then **Settings** > **Domains**.
+2. Enter `tylerlammey.com` and click **Add**. Vercel will automatically configure redirects for `www.tylerlammey.com` to point to the apex domain.
 
-3. **Set up the backend:**
-   ```bash
-   cd /var/www/personal-website/backend
-   python3 -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
-   Create your production environment file: `nano .env` and insert your API keys:
-   ```env
-   OPENAI_API_KEY=your_key_here
-   PUSHOVER_USER=your_user_here
-   PUSHOVER_TOKEN=your_token_here
-   ```
+#### 2. In Railway (Backend)
+1. Go to your backend service dashboard in Railway, then **Settings** > **Domains**.
+2. Click **Custom Domain** and enter `api.tylerlammey.com`.
+3. Railway will generate the corresponding CNAME target you need to enter into your registrar's DNS settings.
 
-4. **Run the backend as a background service (Systemd):**
-   Create a service file:
-   ```bash
-   sudo nano /etc/systemd/system/portfolio-backend.service
-   ```
-   Paste the following:
-   ```ini
-   [Unit]
-   Description=FastAPI Portfolio Backend
-   After=network.target
+---
 
-   [Service]
-   User=root
-   WorkingDirectory=/var/www/personal-website/backend
-   ExecStart=/var/www/personal-website/backend/.venv/bin/uvicorn app:app --host 127.0.0.1 --port 8000
-   Restart=always
+## 4. Cost Breakdown & Budgeting
 
-   [Install]
-   WantedBy=multi-user.target
-   ```
-   Enable and start the backend service:
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable portfolio-backend
-   sudo systemctl start portfolio-backend
-   ```
-
-5. **Build the frontend:**
-   Ensure Node.js is installed on the VPS, or build it locally and upload it. To build on the server:
-   ```bash
-   curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-   sudo apt install -y nodejs
-   cd /var/www/personal-website/frontend
-   # Create frontend production env pointing to local reverse proxy path
-   echo "VITE_API_URL=/api" > .env.production
-   npm install
-   npm run build
-   ```
-   This generates the static production build files inside `/var/www/personal-website/frontend/dist`.
-
-6. **Configure Nginx:**
-   Create an Nginx configuration file:
-   ```bash
-   sudo nano /etc/nginx/sites-available/tylerlammey.com
-   ```
-   Paste the following configuration:
-   ```nginx
-   server {
-       listen 80;
-       server_name tylerlammey.com www.tylerlammey.com;
-
-       # Frontend - Serve static build files
-       location / {
-           root /var/www/personal-website/frontend/dist;
-           index index.html;
-           try_files $uri $uri/ /index.html;
-       }
-
-       # Backend - Reverse proxy /api requests to FastAPI running on port 8000
-       location /api {
-           proxy_pass http://127.0.0.1:8000;
-           proxy_http_version 1.1;
-           proxy_set_header Upgrade $http_upgrade;
-           proxy_set_header Connection 'upgrade';
-           proxy_set_header Host $host;
-           proxy_cache_bypass $http_upgrade;
-           proxy_set_header X-Real-IP $remote_addr;
-           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-           proxy_set_header X-Forwarded-Proto $scheme;
-       }
-   }
-   ```
-   Link the configuration and restart Nginx:
-   ```bash
-   sudo ln -s /etc/nginx/sites-available/tylerlammey.com /etc/nginx/sites-enabled/
-   sudo rm /etc/nginx/sites-enabled/default  # remove default config
-   sudo nginx -t                             # test config syntax
-   sudo systemctl restart nginx
-   ```
-
-7. **Set up HTTPS/SSL (Crucial for Security):**
-   Use Certbot to get a free SSL certificate from Let's Encrypt:
-   ```bash
-   sudo apt install certbot python3-certbot-nginx -y
-   sudo certbot --nginx -d tylerlammey.com -d www.tylerlammey.com
-   ```
-   Follow the prompts. Certbot will automatically rewrite the Nginx configuration to support HTTPS and handle automatic renewals.
+| Component | Host / Provider | Plan / Pricing | Monthly Cost |
+| :--- | :--- | :--- | :--- |
+| **Frontend** | Vercel | Hobby Tier | **$0** |
+| **Backend** | Railway | Hobby / Developer Plan | **~$5.00** (or usage-based) |
+| **SSL / HTTPS** | Let's Encrypt | Automatic via hosts | **$0** |
+| **AI LLM Queries** | OpenAI API | Pay-as-you-go (`gpt-4o-mini`) | **~$1 - $3** (traffic dependent) |
+| **Notifications** | Pushover API | One-time license per device | **$0** |
 
 ---
 
 ## 5. Security & Best Practices
 
-1. **Never Commit Secrets:** Do not push `.env` files to GitHub. In GitHub settings, keep your repository **private** if possible (to protect your portfolio assets/context files), and configure secrets through your hosting provider's GUI or local `.env` files on the VPS.
-2. **CORS Restrictions:** In `backend/app.py` around line 202, once your frontend domain is established, replace:
-   ```python
-   allow_origins=["*"],
-   ```
-   with:
-   ```python
-   allow_origins=["https://tylerlammey.com", "https://www.tylerlammey.com"],
-   ```
-   This prevents other websites from making API requests to your OpenAI backend on your dime.
-3. **OpenAI Budget Limits:** In the OpenAI API developer dashboard, set a hard **monthly usage limit** (e.g., $10 or $20) to ensure that if your site receives unexpected traffic (or a scraping bot), you don't receive an unexpectedly large bill.
+1. **CORS Restrictions**:
+   The backend restricts request headers using FastAPI's [CORSMiddleware](file:///c:/Users/tyler/Documents/Personal%20Website/backend/app.py#L217-L223). The baseline origins are defined directly in [allowed_origins](file:///c:/Users/tyler/Documents/Personal%20Website/backend/app.py#L205-L210), and can be dynamically expanded using the `ALLOWED_ORIGINS` variable.
+2. **Protecting Secrets**:
+   * Production API keys must **never** be committed to GitHub.
+   * [backend/.gitignore](file:///c:/Users/tyler/Documents/Personal%20Website/backend/.gitignore) and [frontend/.gitignore](file:///c:/Users/tyler/Documents/Personal%20Website/frontend/.gitignore) are preconfigured to ignore `.env` files.
+3. **OpenAI Budget Controls**:
+   Ensure you set a **hard spending limit** (e.g., $5.00/month) in your OpenAI Developer Dashboard under Billing > Limits to prevent run-away costs from web scraping, spam, or high traffic.
+
+---
+
+## 6. Local Development Reference
+
+To run the application locally for debugging or feature development:
+
+### Backend Setup
+```bash
+cd backend
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python app.py
+```
+*Server runs locally at `http://localhost:8000`.*
+
+### Frontend Setup
+```bash
+cd frontend
+npm run dev
+```
+*Server runs locally at `http://localhost:5173` (defaults to target `http://localhost:8000` when `VITE_API_URL` is undefined).*.
