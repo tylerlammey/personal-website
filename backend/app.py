@@ -200,10 +200,22 @@ class Me:
 # Initialize FastAPI application
 app = FastAPI(title="Tyler Lammey Portfolio AI Backend")
 
-# Enable CORS so the React frontend on http://localhost:5173 can access this API
+# Define allowed origins for CORS (production domains + local development)
+allowed_origins = [
+    "https://tylerlammey.com",
+    "https://www.tylerlammey.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# Allow adding extra origins via environment variables (comma-separated list)
+env_origins = os.getenv("ALLOWED_ORIGINS")
+if env_origins:
+    allowed_origins.extend([o.strip() for o in env_origins.split(",") if o.strip()])
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend domain
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
