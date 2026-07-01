@@ -257,7 +257,10 @@ async def chat_endpoint(request: ChatRequest):
                 if delta:
                     yield delta
         except Exception as e:
-            yield f"\n[Backend Error: {str(e)}]"
+            # Log the full traceback or error message to the server console
+            print(f"Error during streaming: {str(e)}", flush=True)
+            # Yield a friendly error message instead of raw system/API exceptions
+            yield "\n\n[TylerGPT is having trouble responding right now. Please try again or contact me at tylerlammey@gmail.com if the issue persists.]"
 
     return StreamingResponse(event_generator(), media_type="text/plain")
 
