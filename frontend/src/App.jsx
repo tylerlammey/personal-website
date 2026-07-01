@@ -1091,7 +1091,7 @@ function ChatWindow({ pendingPrompt, onPromptSent }) {
       }
     } catch (err) {
       console.error(err);
-      setMessages([...history, { role: "assistant", content: "Network error — please make sure the backend is running." }]);
+      setMessages([...history, { role: "assistant", content: "Network error — TylerGPT is offline. Please reach out to me at tylerlammey@gmail.com to let me know!" }]);
     } finally {
       setLoading(false);
     }
