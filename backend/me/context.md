@@ -162,7 +162,7 @@ I'm most interested in:
 * **ECSE 2610** — Computer Components & Operations
 * **ECSE 2660** — Computer Architecture & Networks
 * **ECSE 4670** — Computer Communication Networks *(In Progress)*
-* **ECSE 4967** — Introduction to Quantum Electronic Devices
+* **ECSE 4967** — Introduction to Quantum Electronic Devices *(Course paper: "Nuclear Magnetic Resonance (NMR) Qubits")*
 
 ### Engineering
 
@@ -200,6 +200,11 @@ I'm most interested in:
 ---
 
 ## Projects
+
+### Nuclear Magnetic Resonance (NMR) Qubits
+* **Class:** ECSE 4967 — Introduction to Quantum Electronic Devices (Spring 2026)
+* **Authors:** Connor Czincila, Tyler Lammey
+* **Details:** Conducted a comprehensive theoretical study on the physical principles and mathematical modeling of NMR quantum computing. Formulated Hamiltonian equations for coupled spin systems and simplified forms under secular approximations. Investigated initialization methods for pseudo-pure states at room temperature using RF pulses and gradient fields, and analyzed physical limitations in scalability and entanglement preservation for systems like SpinQ's portable quantum computers.
 
 ### Automated IoT Plant Care System
 * **Technologies:** Arduino, FastAPI, C++, Python, JSON

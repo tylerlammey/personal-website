@@ -909,6 +909,14 @@ const PROJECTS = [
     code: "https://github.com/tylerlammey/personal-website",
   },
   {
+    icon: "⚛️",
+    title: "Nuclear Magnetic Resonance (NMR) Qubits",
+    desc: "An analysis of NMR quantum computing, formulating Hamiltonian systems, modeling pseudo-pure state initialization, and evaluating scalability limitations of portable NMR systems.",
+    tags: ["Quantum Computing", "NMR", "Academic Research"],
+    demo: "/nmr_qubits_paper.pdf",
+    code: "",
+  },
+  {
     icon: "🌱",
     title: "Automated IoT Plant Care System",
     desc: "An edge-to-cloud plant monitoring system with real-time telemetry, automated watering control cycles, and a remote FastAPI web application interface.",
@@ -1557,6 +1565,8 @@ export default function App() {
                     <a
                       className="project-link"
                       href={p.demo}
+                      target={p.demo.startsWith("#") ? undefined : "_blank"}
+                      rel={p.demo.startsWith("#") ? undefined : "noopener noreferrer"}
                       onClick={(e) => {
                         if (p.demo.startsWith("#")) {
                           e.preventDefault();
@@ -1564,8 +1574,17 @@ export default function App() {
                         }
                       }}
                     >
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
-                      Live Demo
+                      {p.demo.endsWith(".pdf") ? (
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <line x1="16" y1="13" x2="8" y2="13" />
+                          <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                      ) : (
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                      )}
+                      {p.demo.endsWith(".pdf") ? "Read Paper" : "Live Demo"}
                     </a>
                   )}
                   {p.code && (
