@@ -1529,7 +1529,7 @@ export default function App() {
       <section id="agent" style={{ maxWidth: "100%", padding: "0", position: "relative", overflow: "hidden" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "6rem 2rem", display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", justifyContent: "center" }}>
           <div className="orb" />
-          <div className="hero-eyebrow">Computer & Systems Engineering Student @ RPI</div>
+          <div className="hero-eyebrow">Computer Engineering Student @ RPI</div>
           <div className="hero-name">Tyler Lammey</div>
           <div className="hero-tagline">Radar Systems Engineering Intern at Raytheon.</div>
 
