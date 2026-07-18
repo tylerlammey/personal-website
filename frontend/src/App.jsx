@@ -962,20 +962,20 @@ const PROJECTS = [
     code: "https://github.com/tylerlammey/personal-website",
   },
   {
-    icon: "⚛️",
-    title: "Nuclear Magnetic Resonance (NMR) Qubits",
-    desc: "An analysis of NMR quantum computing, formulating Hamiltonian systems, modeling pseudo-pure state initialization, and evaluating scalability limitations of portable NMR systems.",
-    tags: ["Quantum Computing", "NMR", "Academic Research"],
-    demo: "/nmr_qubits_paper.pdf",
-    code: "",
-  },
-  {
     icon: "🌱",
     title: "Automated IoT Plant Care System",
     desc: "An edge-to-cloud plant monitoring system with real-time telemetry, automated watering control cycles, and a remote FastAPI web application interface.",
     tags: ["Arduino", "C++", "FastAPI", "Python", "IoT"],
     demo: "",
     code: "https://github.com/tylerlammey/automated-IoT-plant-care",
+  },
+  {
+    icon: "⚛️",
+    title: "Nuclear Magnetic Resonance (NMR) Qubits",
+    desc: "An analysis of NMR quantum computing, formulating Hamiltonian systems, modeling pseudo-pure state initialization, and evaluating scalability limitations of portable NMR systems.",
+    tags: ["Quantum Computing", "NMR", "Academic Research"],
+    demo: "/nmr_qubits_paper.pdf",
+    code: "",
   },
   {
     icon: "⚓",
