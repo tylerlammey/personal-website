@@ -983,7 +983,7 @@ const PROJECTS = [
     desc: "Collaborated on web API architecture and frontend consoles to coordinate streaming data telemetry from sub-surface exploration vessels.",
     tags: ["FastAPI", "React", "SQL", "Web API"],
     demo: "",
-    code: "",
+    code: "https://github.com/U-of-T-Underwater-Exploration/website",
   },
 ];
 
