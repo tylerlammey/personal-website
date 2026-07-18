@@ -104,7 +104,7 @@ const css = `
     z-index: 1;
     max-width: 1100px;
     margin: 0 auto;
-    padding: 6rem 2rem;
+    padding: 4rem 6rem;
   }
 
   .section-label {
