@@ -972,7 +972,7 @@ const PROJECTS = [
   {
     icon: "⚛️",
     title: "Nuclear Magnetic Resonance (NMR) Qubits",
-    desc: "An analysis of NMR quantum computing, formulating Hamiltonian systems, modeling pseudo-pure state initialization, and evaluating scalability limitations of portable NMR systems.",
+    desc: "A theoretical research paper analyzing NMR quantum computing, formulating Hamiltonian systems, modeling pseudo-pure state initialization, and evaluating scalability limitations.",
     tags: ["Quantum Computing", "NMR", "Academic Research"],
     demo: "/nmr_qubits_paper.pdf",
     code: "",
