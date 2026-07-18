@@ -1550,7 +1550,7 @@ export default function App() {
       {/* Projects */}
       <section id="projects">
         <div className="section-label">Work</div>
-        <div className="section-title">Selected Projects</div>
+        <div className="section-title">Featured Projects</div>
         <p className="section-sub">A collection of things I've built — from internal tooling to consumer products.</p>
         <div className="projects-grid">
           {PROJECTS.map((p) => (
