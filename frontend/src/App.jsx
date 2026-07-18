@@ -979,8 +979,8 @@ const PROJECTS = [
   },
   {
     icon: "⚓",
-    title: "Underwater Exploration API",
-    desc: "Collaborated on web API architecture and frontend consoles to coordinate streaming data telemetry from sub-surface exploration vessels.",
+    title: "UTUX Underwater Exploration Website",
+    desc: "Developed the entire backend API and collaborated on the frontend interface for the University of Toronto Underwater Exploration (UTUX) student design club website.",
     tags: ["FastAPI", "React", "SQL", "Web API"],
     demo: "",
     code: "https://github.com/U-of-T-Underwater-Exploration/website",

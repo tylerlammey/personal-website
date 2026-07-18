@@ -219,8 +219,8 @@ I'm most interested in:
 * **Technologies:** Arduino, FastAPI, C++, Python, JSON
 * **Responsibilities:** Designed the circuitry, selected hardware components, programmed the embedded software on Arduino, and developed the remote application interface.
 
-### University of Toronto Underwater Exploration
-* **Responsibilities:** Designed and implemented a web API and collaborated on frontend development.
+### UTUX (University of Toronto Underwater Exploration) Club Website
+* **Responsibilities:** Designed and implemented the entire backend API and collaborated on the frontend interface for the student design club website.
 
 ---
 
