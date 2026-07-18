@@ -163,10 +163,7 @@ const css = `
     font-weight: 700;
     line-height: 1.05;
     margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, #fff 30%, var(--violet-light) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text);
   }
 
   .hero-tagline {
@@ -196,7 +193,35 @@ const css = `
   }
 
   /* ── ChatGPT-style Chat Window ── */
-  /* ── ChatGPT-style Chat Window ── */
+  @keyframes returnNormal {
+    from {
+      opacity: 0.1;
+      transform: scale(1.08) translateY(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes enterFullscreen {
+    0% {
+      opacity: 0;
+      transform: scale(0.88) translateY(16px);
+      border-radius: 40px;
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      border-radius: 0;
+    }
+  }
+
+  @keyframes backdropFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
   .chat-container {
     position: relative;
     width: 100%;
@@ -210,6 +235,31 @@ const css = `
     flex-direction: column;
     height: 700px;
     text-align: left; /* overrides text-align: center inherited from #root in index.css */
+    animation: returnNormal 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    will-change: transform, opacity;
+  }
+
+  .chat-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    border-radius: 0;
+    border: none;
+    z-index: 9999;
+    animation: enterFullscreen 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .fullscreen-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 9998;
+    animation: backdropFadeIn 0.4s ease forwards;
   }
 
   .chat-header {
@@ -243,7 +293,7 @@ const css = `
     margin-top: 1px;
   }
 
-  .chat-header-new-btn {
+  .chat-header-btn {
     background: none;
     border: none;
     color: #b4b4b4;
@@ -256,7 +306,7 @@ const css = `
     border-radius: 8px;
     transition: background-color 0.2s, color 0.2s;
   }
-  .chat-header-new-btn:hover {
+  .chat-header-btn:hover {
     background: rgba(255, 255, 255, 0.05);
     color: #ececec;
   }
@@ -981,7 +1031,7 @@ const SUGGESTED = [
 ];
 
 // ─── Chat Component ────────────────────────────────────────────────────────────
-function ChatWindow({ pendingPrompt, onPromptSent }) {
+function ChatWindow({ pendingPrompt, onPromptSent, isFullscreen, setIsFullscreen }) {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
@@ -1002,6 +1052,13 @@ function ChatWindow({ pendingPrompt, onPromptSent }) {
       if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isFullscreen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isFullscreen]);
 
   const handleAttachClick = () => {
     const FUNNY_NOTES = [
@@ -1127,7 +1184,7 @@ function ChatWindow({ pendingPrompt, onPromptSent }) {
   };
 
   return (
-    <div className="chat-container">
+    <div className={`chat-container ${isFullscreen ? "fullscreen" : ""}`}>
       {/* Header */}
       <div className="chat-header">
         <div className="chat-header-model-selector">
@@ -1136,12 +1193,29 @@ function ChatWindow({ pendingPrompt, onPromptSent }) {
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
-        <button className="chat-header-new-btn" onClick={handleReset} title="New chat">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"></path>
-          </svg>
-        </button>
+        <div style={{ display: "flex", gap: "0.25rem" }}>
+          <button className="chat-header-btn" onClick={handleReset} title="New chat">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4z"></path>
+            </svg>
+          </button>
+          <button
+            className="chat-header-btn"
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+          >
+            {isFullscreen ? (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7" />
+              </svg>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
@@ -1253,7 +1327,7 @@ function ChatWindow({ pendingPrompt, onPromptSent }) {
   );
 }
 
-function InteractiveGrid() {
+function InteractiveGrid({ paused }) {
   const canvasRef = useRef(null);
   const mouse = useRef({ x: -1000, y: -1000 });
 
@@ -1351,6 +1425,7 @@ function InteractiveGrid() {
     }
 
     const draw = () => {
+      if (paused) return;
       if (isMobile) {
         drawStatic();
         return;
@@ -1457,10 +1532,14 @@ function InteractiveGrid() {
       animationFrameId = requestAnimationFrame(draw);
     };
 
-    if (isMobile) {
+    if (paused) {
       drawStatic();
     } else {
-      draw();
+      if (isMobile) {
+        drawStatic();
+      } else {
+        draw();
+      }
     }
 
     return () => {
@@ -1469,7 +1548,7 @@ function InteractiveGrid() {
       document.removeEventListener("mouseleave", handleMouseLeave);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [paused]);
 
   return (
     <canvas
@@ -1491,23 +1570,24 @@ function InteractiveGrid() {
 export default function App() {
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   const [pendingPrompt, setPendingPrompt] = useState(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   return (
     <>
       <style>{css}</style>
-      <InteractiveGrid />
+      <InteractiveGrid paused={isFullscreen} />
 
       {/* Nav */}
       <nav>
         <div className="nav-logo">
-          <a href="#agent" onClick={(e) => { e.preventDefault(); scrollTo("agent"); }}>
+          <a href="#agent" onClick={(e) => { e.preventDefault(); setIsFullscreen(false); scrollTo("agent"); }}>
             {'<TylerLammey />'}
           </a>
         </div>
         <ul className="nav-links">
-          <li><a href="#agent" onClick={(e) => { e.preventDefault(); scrollTo("agent"); }}>AI Agent</a></li>
-          <li><a href="#projects" onClick={(e) => { e.preventDefault(); scrollTo("projects"); }}>Projects</a></li>
-          <li><a href="#resume" onClick={(e) => { e.preventDefault(); scrollTo("resume"); }}>Resume</a></li>
+          <li><a href="#agent" onClick={(e) => { e.preventDefault(); setIsFullscreen(false); scrollTo("agent"); }}>AI Agent</a></li>
+          <li><a href="#projects" onClick={(e) => { e.preventDefault(); setIsFullscreen(false); scrollTo("projects"); }}>Projects</a></li>
+          <li><a href="#resume" onClick={(e) => { e.preventDefault(); setIsFullscreen(false); scrollTo("resume"); }}>Resume</a></li>
           <li className="nav-separator">|</li>
           <li>
             <a href="https://github.com/tylerlammey" target="_blank" rel="noopener noreferrer" title="GitHub" className="nav-icon-link">
@@ -1528,7 +1608,7 @@ export default function App() {
       </nav>
 
       {/* Hero / AI Agent */}
-      <section id="agent" style={{ maxWidth: "100%", padding: "0", position: "relative", overflow: "hidden" }}>
+      <section id="agent" style={{ maxWidth: "100%", padding: "0", position: "relative", overflow: isFullscreen ? "visible" : "hidden", zIndex: isFullscreen ? 10000 : 1 }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "6rem 2rem", display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", justifyContent: "center" }}>
           <div className="orb" />
           <div className="hero-eyebrow">Computer Engineering Student @ RPI</div>
@@ -1543,7 +1623,18 @@ export default function App() {
             ))}
           </div>
 
-          <ChatWindow pendingPrompt={pendingPrompt} onPromptSent={() => setPendingPrompt(null)} />
+          {isFullscreen && (
+            <div className="fullscreen-backdrop" onClick={() => setIsFullscreen(false)} />
+          )}
+          {isFullscreen && (
+            <div style={{ height: 700, width: "100%", maxWidth: 850 }} />
+          )}
+          <ChatWindow
+            pendingPrompt={pendingPrompt}
+            onPromptSent={() => setPendingPrompt(null)}
+            isFullscreen={isFullscreen}
+            setIsFullscreen={setIsFullscreen}
+          />
         </div>
       </section>
 
