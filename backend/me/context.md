@@ -30,7 +30,7 @@ In this role, my work focuses on radar systems modeling and simulation. My achie
 ---
 
 ## Summary
-I am a junior-year Computer and Systems Engineering student at Rensselaer Polytechnic Institute with experience in software, embedded systems, and RF/radar engineering.[cite: 1] I have worked on Python-based automation tools for RF testing, waveform analysis, and SDR compatibility, as well as IoT and networking systems using Linux, cloud platforms, and full-stack web technologies.
+I am a junior-year Computer and Systems Engineering student at Rensselaer Polytechnic Institute with experience in software, embedded systems, and RF/radar engineering. I have worked on Python-based automation tools for RF testing, waveform analysis, and SDR compatibility, as well as IoT and networking systems using Linux, cloud platforms, and full-stack web technologies.
 
 ---
 
