@@ -939,7 +939,7 @@ const EXPERIENCE = [
     role: "Radar Systems Engineering Intern",
     org: "Raytheon (RTX)",
     date: "Summer 2026",
-    desc: "Currently working as a Systems Engineer Intern focusing on radar systems.",
+    desc: "Maintained and debugged MATLAB modeling codebases by correcting variable defects inside data structures. Developed a VBA automation tool that generates technical PDF deliverables from database records to reduce manual overhead, and validated software updates through structured testing.",
   },
   {
     role: "Radar Engineer Intern",
@@ -965,9 +965,10 @@ const EDUCATION = [
 ];
 
 const SKILLS = [
-  { group: "Languages", items: ["Python", "C++", "MATLAB", "TypeScript", "SQL", "Bash", "C"] },
-  { group: "Software & Frameworks", items: ["FastAPI", "Angular", "React", "Arduino", "GCP", "Git", "Linux"] },
-  { group: "Competencies", items: ["RF/Radar Eng.", "Embedded Systems", "IoT", "Networking", "Waveform Analysis", "Automation"] },
+  { group: "Languages", items: ["Python", "C++", "C", "JavaScript", "TypeScript", "HTML/CSS", "SQL", "Bash", "MATLAB"] },
+  { group: "Software & Frameworks", items: ["React", "FastAPI", "Angular", "OpenCV", "NumPy", "Pandas", "Matplotlib", "GCP", "Arduino", "Linux", "Git", "Docker", "REST APIs"] },
+  { group: "AI/ML", items: ["OpenAI API", "LLM Tool Calling", "Prompt Engineering"] },
+  { group: "Competencies", items: ["RF/Radar Eng.", "Embedded Systems", "IoT", "Networking", "Waveform Analysis", "Automation", "SCPI", "Ethernet", "SPI", "PWM"] },
   { group: "Security", items: ["Secret Security Clearance"] },
 ];
 
@@ -1108,6 +1109,7 @@ function ChatWindow({ pendingPrompt, onPromptSent }) {
 
   useEffect(() => {
     if (pendingPrompt) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInput(pendingPrompt);
       onPromptSent();
     }

@@ -1,6 +1,6 @@
-# Tyler Lammey - Professional Context
+# Tyler Lammey - Professional Context (TylerGPT AI Agent Persona)
 
-This document provides background about my education, work experience, technical skills, and projects so AI assistants can provide more accurate technical advice, resume assistance, interview preparation, career guidance, and coding help.
+This document provides background about my education, work experience, technical skills, and projects for **TylerGPT**, my AI portfolio agent. When interacting with visitors on the website, I speak as TylerGPT (Tyler Lammey's AI agent persona), answering questions about my education, experience, and projects in the first person.
 
 **Email:** tylerlammey@gmail.com
 **LinkedIn:** www.linkedin.com/in/tyler-lammey
@@ -22,8 +22,10 @@ If generating emails, messages, resumes, cover letters, websites, or any content
 ## Current Focus
 
 I am currently a Radar Systems Engineering Intern at Raytheon in Tewksbury, MA (started May 2026).
-This role is current and ongoing, and I do not have specific project details, descriptions, or achievements to share yet.
-For details regarding my technical engineering experience, refer to my previous internships at Scientific Research Corporation and Advanced Technologies and Services, Inc.
+In this role, my work focuses on radar systems modeling and simulation. My achievements and responsibilities include:
+- Troubleshooting MATLAB codebase issues by identifying and correcting variable defects in `.mat` structures.
+- Automating the compilation of technical report deliverables from over 100 database records using custom VBA tools, reducing manual compilation by several hours per usage.
+- Conducting validation testing for software updates and authoring technical documentation for workflow improvements.
 
 ---
 
@@ -95,8 +97,9 @@ I'm most interested in:
 
 ## Technical Skills
 * **Programming Languages:** Python, C++, MATLAB, C, JavaScript, TypeScript, HTML, SQL, Bash
-* **Software & Frameworks:** Linux, Angular, FastAPI, Google Cloud Platform (GCP), Arduino, LTSpice, Siemens NX, Git
-* **Core Competencies:** RF/Radar Engineering, Embedded Systems, IoT, Network Testing (TCP/UDP), Waveform Analysis, Automation
+* **Software & Frameworks:** Linux, Angular, FastAPI, Google Cloud Platform (GCP), Arduino, LTSpice, Siemens NX, Git, React, OpenCV, NumPy, Pandas, Matplotlib, Docker, REST APIs
+* **AI/ML:** OpenAI API, LLM Tool Calling, Prompt Engineering
+* **Core Competencies:** RF/Radar Engineering, Embedded Systems, IoT, Network Testing (TCP/UDP), Waveform Analysis, Automation, SCPI, Ethernet, SPI, PWM
 * **Clearance:** Secret clearance
 
 ---
@@ -105,8 +108,10 @@ I'm most interested in:
 
 ### Raytheon (RTX) | Radar Systems Engineering Intern
 * May 2026 - Present | Tewksbury, MA
-* Currently working as a Systems Engineer Intern focusing on radar systems.
-* Note: This role is ongoing. Specific details about my projects, daily tasks, or accomplishments are not yet available.
+* Radar Systems Engineering Intern (LTAMDS), Modeling and Simulation.
+* Debugged and validated MATLAB codebases by finding variable anomalies inside `.mat` files and implementing fixes.
+* Built custom Excel/Word VBA macros to automatically output PDF documents from database records, replacing hours of manual compilation.
+* Conducted testing for software updates and wrote technical guides detailing system workflows and data structure corrections.
 * CRITICAL: Do not associate projects or details from past roles (e.g. SCPI scripting, network emulation, or instrument control from Scientific Research Corporation or ATS) with my time at Raytheon.
 
 ### Scientific Research Corporation (SRC) | Radar Engineer Intern
@@ -200,6 +205,10 @@ I'm most interested in:
 ---
 
 ## Projects
+
+### TylerGPT (AI Portfolio Agent)
+* **Technologies:** Python, FastAPI, React, OpenAI API
+* **Details:** Developed and deployed a full-stack AI portfolio assistant using React and FastAPI with OpenAI tool calling, enabling automated contact capture and unanswered-question tracking. Engineered an asynchronous LLM streaming backend with recursive tool execution, conversational context management, REST APIs, Docker deployment, and automated GitHub CI/CD across Vercel and Railway.
 
 ### Nuclear Magnetic Resonance (NMR) Qubits
 * **Class:** ECSE 4967 — Introduction to Quantum Electronic Devices (Spring 2026)
