@@ -602,6 +602,8 @@ const css = `
     transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .project-card::before {
     content: '';
@@ -659,7 +661,8 @@ const css = `
   .project-links {
     display: flex;
     gap: 0.75rem;
-    margin-top: 1rem;
+    margin-top: auto;
+    padding-top: 1rem;
   }
 
   .project-link {
@@ -972,7 +975,7 @@ const PROJECTS = [
     desc: "An edge-to-cloud plant monitoring system with real-time telemetry, automated watering control cycles, and a remote FastAPI web application interface.",
     tags: ["Arduino", "C++", "FastAPI", "Python", "IoT"],
     demo: "",
-    code: "",
+    code: "https://github.com/tylerlammey/automated-IoT-plant-care",
   },
   {
     icon: "⚓",
