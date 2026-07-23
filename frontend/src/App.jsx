@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import headshot from "./assets/linkedin_headshot.jpg";
 
 // ─── Inline styles ────────────────────────────────────────────────────────────
 const css = `
@@ -342,14 +343,24 @@ const css = `
   }
 
   .msg-avatar {
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .msg-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    transform: scale(1.15);
+    transform-origin: center 35%;
   }
 
   .msg-avatar.assistant {
@@ -1231,35 +1242,7 @@ function ChatWindow({ pendingPrompt, onPromptSent, isFullscreen, setIsFullscreen
           <div key={i} className={`msg-row ${m.role}`}>
             {m.role === "assistant" && (
               <div className="msg-avatar assistant">
-                <svg width="36" height="36" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="14" cy="14" r="13" fill="url(#avatarGlow)" opacity="0.15" />
-                  <circle cx="14" cy="14" r="12" fill="url(#avatarBgGrad)" stroke="url(#avatarBorderGrad)" strokeWidth="1.2" />
-                  <path d="M 6.5 23 C 6.5 19 9.5 17.5 14 17.5 C 18.5 17.5 21.5 19 21.5 23" stroke="url(#avatarIconGrad)" strokeWidth="1.5" strokeLinecap="round" />
-                  <rect x="10.5" y="8" width="7" height="8" rx="3.5" fill="url(#avatarBgGrad)" stroke="url(#avatarIconGrad)" strokeWidth="1.5" />
-                  <path d="M 14 15.5 V 17.5" stroke="url(#avatarIconGrad)" strokeWidth="1.5" />
-                  <path d="M 11.5 11.5 H 16.5" stroke="#A78BFA" strokeWidth="1.2" strokeLinecap="round" />
-                  <path d="M 14 8 V 5.5" stroke="url(#avatarIconGrad)" strokeWidth="1" />
-                  <circle cx="14" cy="4.5" r="1" fill="#A78BFA" />
-                  <defs>
-                    <radialGradient id="avatarGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#7C3AED" />
-                      <stop offset="100%" stopColor="#7C3AED" stopOpacity="0" />
-                    </radialGradient>
-                    <linearGradient id="avatarBgGrad" x1="0" y1="0" x2="28" y2="28">
-                      <stop offset="0%" stopColor="#1E1235" />
-                      <stop offset="100%" stopColor="#0F091D" />
-                    </linearGradient>
-                    <linearGradient id="avatarBorderGrad" x1="0" y1="0" x2="28" y2="28">
-                      <stop offset="0%" stopColor="#A78BFA" />
-                      <stop offset="50%" stopColor="#7C3AED" />
-                      <stop offset="100%" stopColor="#4C1D95" />
-                    </linearGradient>
-                    <linearGradient id="avatarIconGrad" x1="6" y1="5" x2="22" y2="23">
-                      <stop offset="0%" stopColor="#FFFFFF" />
-                      <stop offset="100%" stopColor="#C0A8FF" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+                <img src={headshot} alt="TylerGPT" />
               </div>
             )}
             <div className={`msg-bubble ${m.role}`}>
