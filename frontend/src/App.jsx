@@ -1030,8 +1030,8 @@ const EDUCATION = [
 
 const SKILLS = [
   { group: "Languages", items: ["Python", "C++", "C", "JavaScript", "TypeScript", "HTML/CSS", "SQL", "Bash", "MATLAB"] },
-  { group: "Software & Frameworks", items: ["React", "FastAPI", "Angular", "OpenCV", "NumPy", "Pandas", "Matplotlib", "GCP", "Arduino", "Linux", "Git", "Docker", "REST APIs"] },
-  { group: "AI/ML", items: ["OpenAI API", "LLM Tool Calling", "Prompt Engineering"] },
+  { group: "Software & Frameworks", items: ["React", "FastAPI", "Angular", "PyTorch", "Hugging Face", "OpenCV", "NumPy", "Pandas", "Matplotlib", "GCP", "Arduino", "Linux", "Git", "Docker", "REST APIs", "Jupyter Notebooks"] },
+  { group: "AI/ML", items: ["Object Detection & Segmentation (SAM)", "Deep Learning", "OpenAI API", "LLM Tool Calling", "Prompt Engineering"] },
   { group: "Competencies", items: ["RF/Radar Eng.", "Embedded Systems", "IoT", "Networking", "Waveform Analysis", "Automation", "SCPI", "Ethernet", "SPI", "PWM"] },
   { group: "Security", items: ["Secret Security Clearance"] },
 ];
@@ -1723,9 +1723,9 @@ export default function App() {
           </div>
         </div>
 
-        <a 
-          href="/Tyler_Lammey_Resume.pdf" 
-          download="Tyler_Lammey_Resume.pdf" 
+        <a
+          href="/Tyler_Lammey_Resume.pdf"
+          download="Tyler_Lammey_Resume.pdf"
           className="resume-download-btn"
           onClick={() => {
             window.open('/Tyler_Lammey_Resume.pdf', '_blank');

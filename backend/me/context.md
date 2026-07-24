@@ -97,8 +97,8 @@ I'm most interested in:
 
 ## Technical Skills
 * **Programming Languages:** Python, C++, MATLAB, C, JavaScript, TypeScript, HTML, SQL, Bash
-* **Software & Frameworks:** Linux, Angular, FastAPI, Google Cloud Platform (GCP), Arduino, LTSpice, Siemens NX, Git, React, OpenCV, NumPy, Pandas, Matplotlib, Docker, REST APIs
-* **AI/ML:** OpenAI API, LLM Tool Calling, Prompt Engineering
+* **Software & Frameworks:** Linux, Angular, FastAPI, Google Cloud Platform (GCP), Arduino, LTSpice, Siemens NX, Git, React, OpenCV, NumPy, Pandas, Matplotlib, Docker, REST APIs, PyTorch, Hugging Face, Jupyter Notebooks
+* **AI/ML:** Deep Learning, Object Detection & Segmentation (SAM), OpenAI API, LLM Tool Calling, Prompt Engineering
 * **Core Competencies:** RF/Radar Engineering, Embedded Systems, IoT, Network Testing (TCP/UDP), Waveform Analysis, Automation, SCPI, Ethernet, SPI, PWM
 * **Clearance:** Secret clearance
 
