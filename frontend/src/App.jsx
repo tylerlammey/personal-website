@@ -1665,7 +1665,7 @@ export default function App() {
       <section id="projects">
         <div className="section-label">Work</div>
         <div className="section-title">Featured Projects</div>
-        <p className="section-sub">A collection of things I've built — from internal tooling to consumer products.</p>
+        <p className="section-sub">A collection of things I've built.</p>
         <div className="projects-grid">
           {PROJECTS.map((p) => (
             <div className="project-card" key={p.title}>
@@ -1754,13 +1754,13 @@ export default function App() {
                 <div className="skill-group-name">{sg.group}</div>
                 <div className="skill-pills">
                   {sg.items.map((s) => {
-                    const label = s.proficiency === "professional" 
-                      ? "Professional Experience" 
-                      : s.proficiency === "project" 
-                      ? "Project-Based Experience" 
-                      : s.proficiency === "academic" 
-                      ? "Academic / Coursework" 
-                      : "";
+                    const label = s.proficiency === "professional"
+                      ? "Professional Experience"
+                      : s.proficiency === "project"
+                        ? "Project-Based Experience"
+                        : s.proficiency === "academic"
+                          ? "Academic / Coursework"
+                          : "";
                     return (
                       <span
                         className="skill-pill"
