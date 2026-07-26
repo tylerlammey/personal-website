@@ -1,0 +1,191 @@
+[
+  {
+    "group": "Languages",
+    "items": [
+      {
+        "name": "Python",
+        "proficiency": "professional"
+      },
+      {
+        "name": "C++",
+        "proficiency": "project"
+      },
+      {
+        "name": "C",
+        "proficiency": "academic"
+      },
+      {
+        "name": "JavaScript",
+        "proficiency": "academic"
+      },
+      {
+        "name": "TypeScript",
+        "proficiency": "professional"
+      },
+      {
+        "name": "HTML/CSS",
+        "proficiency": "professional"
+      },
+      {
+        "name": "SQL",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Bash",
+        "proficiency": "professional"
+      },
+      {
+        "name": "MATLAB",
+        "proficiency": "professional"
+      }
+    ]
+  },
+  {
+    "group": "Software & Frameworks",
+    "items": [
+      {
+        "name": "React",
+        "proficiency": "project"
+      },
+      {
+        "name": "FastAPI",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Angular",
+        "proficiency": "professional"
+      },
+      {
+        "name": "PyTorch",
+        "proficiency": "academic"
+      },
+      {
+        "name": "Hugging Face",
+        "proficiency": "academic"
+      },
+      {
+        "name": "OpenCV",
+        "proficiency": "academic"
+      },
+      {
+        "name": "NumPy",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Pandas",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Matplotlib",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Google Cloud Platform",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Arduino",
+        "proficiency": "project"
+      },
+      {
+        "name": "Linux",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Git",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Docker",
+        "proficiency": "professional"
+      },
+      {
+        "name": "REST APIs",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Jupyter Notebooks",
+        "proficiency": "academic"
+      }
+    ]
+  },
+  {
+    "group": "AI/ML",
+    "items": [
+      {
+        "name": "Object Detection & Segmentation (SAM)",
+        "proficiency": "academic"
+      },
+      {
+        "name": "Deep Learning",
+        "proficiency": "academic"
+      },
+      {
+        "name": "OpenAI API",
+        "proficiency": "project"
+      },
+      {
+        "name": "LLM Tool Calling",
+        "proficiency": "project"
+      },
+      {
+        "name": "Prompt Engineering",
+        "proficiency": "project"
+      }
+    ]
+  },
+  {
+    "group": "Competencies",
+    "items": [
+      {
+        "name": "RF/Radar Eng.",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Embedded Systems",
+        "proficiency": "project"
+      },
+      {
+        "name": "IoT",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Networking",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Waveform Analysis",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Automation",
+        "proficiency": "professional"
+      },
+      {
+        "name": "SCPI",
+        "proficiency": "professional"
+      },
+      {
+        "name": "Ethernet",
+        "proficiency": "professional"
+      },
+      {
+        "name": "SPI",
+        "proficiency": "project"
+      },
+      {
+        "name": "PWM",
+        "proficiency": "project"
+      }
+    ]
+  },
+  {
+    "group": "Security",
+    "items": [
+      {
+        "name": "Secret Security Clearance",
+        "proficiency": "none"
+      }
+    ]
+  }
+]

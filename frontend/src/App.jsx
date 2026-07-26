@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import headshot from "./assets/linkedin_headshot.jpg";
+import SKILLS from "./skills.json";
 
 // ─── Inline styles ────────────────────────────────────────────────────────────
 const css = `
@@ -895,11 +896,53 @@ const css = `
     color: var(--text);
     font-family: var(--mono);
     transition: border-color 0.2s, background 0.2s;
+    position: relative;
   }
   .skill-pill:hover {
     border-color: rgba(124,58,237,0.4);
     background: rgba(124,58,237,0.08);
     color: var(--violet-light);
+  }
+  .skill-pill[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 135%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: rgba(17, 17, 24, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-family: var(--sans);
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    z-index: 50;
+  }
+  .skill-pill[data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--border) transparent transparent transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+  }
+  .skill-pill[data-tooltip]:hover::after,
+  .skill-pill[data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 
   .resume-download-btn {
@@ -1028,13 +1071,7 @@ const EDUCATION = [
   },
 ];
 
-const SKILLS = [
-  { group: "Languages", items: ["Python", "C++", "C", "JavaScript", "TypeScript", "HTML/CSS", "SQL", "Bash", "MATLAB"] },
-  { group: "Software & Frameworks", items: ["React", "FastAPI", "Angular", "PyTorch", "Hugging Face", "OpenCV", "NumPy", "Pandas", "Matplotlib", "GCP", "Arduino", "Linux", "Git", "Docker", "REST APIs", "Jupyter Notebooks"] },
-  { group: "AI/ML", items: ["Object Detection & Segmentation (SAM)", "Deep Learning", "OpenAI API", "LLM Tool Calling", "Prompt Engineering"] },
-  { group: "Competencies", items: ["RF/Radar Eng.", "Embedded Systems", "IoT", "Networking", "Waveform Analysis", "Automation", "SCPI", "Ethernet", "SPI", "PWM"] },
-  { group: "Security", items: ["Secret Security Clearance"] },
-];
+
 
 const SUGGESTED = [
   "What are your strongest technical skills?",
@@ -1716,7 +1753,24 @@ export default function App() {
               <div className="skill-group" key={sg.group}>
                 <div className="skill-group-name">{sg.group}</div>
                 <div className="skill-pills">
-                  {sg.items.map((s) => <span className="skill-pill" key={s}>{s}</span>)}
+                  {sg.items.map((s) => {
+                    const label = s.proficiency === "professional" 
+                      ? "Professional Experience" 
+                      : s.proficiency === "project" 
+                      ? "Project-Based Experience" 
+                      : s.proficiency === "academic" 
+                      ? "Academic / Coursework" 
+                      : "";
+                    return (
+                      <span
+                        className="skill-pill"
+                        key={s.name}
+                        data-tooltip={label || undefined}
+                      >
+                        {s.name}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             ))}
