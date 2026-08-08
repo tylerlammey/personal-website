@@ -17,14 +17,14 @@ graph TD
     Vercel[Vercel Global CDN<br>React Frontend]
     Railway[Railway Cloud Container<br>FastAPI Backend]
     OpenAI[OpenAI API<br>gpt-4o-mini]
-    Pushover[Pushover Notification API]
+    Discord[Discord Webhooks API]
 
     Client -->|DNS Lookup: tylerlammey.com| DNS
     Client -->|DNS Lookup: api.tylerlammey.com| DNS
     Client -->|Load Static Assets| Vercel
     Client -->|Stream Chat Requests| Railway
     Railway -->|Retrieve AI Completions| OpenAI
-    Railway -->|Send Lead & Feedback Alerts| Pushover
+    Railway -->|Send Lead, Question & Log Alerts| Discord
 ```
 
 ### Components
@@ -32,7 +32,7 @@ graph TD
 2. **Backend (Railway)**: Runs the FastAPI server in a virtualized Docker container, handling real-time OpenAI streaming completions and logging.
 3. **Integrations**:
    - **OpenAI API**: Powers the streaming chat engine (TylerGPT).
-   - **Pushover API**: Sends real-time notifications when a user submits contact info or when TylerGPT cannot answer a query.
+   - **Discord Webhooks**: Sends real-time notifications to designated Discord channels when a user submits contact info, when TylerGPT cannot answer a query, or to log conversation transcripts.
 
 ---
 
@@ -49,8 +49,9 @@ Railway automatically detects Python code repositories, installs requirements, a
    - **Custom Start Command**: `uvicorn app:app --host 0.0.0.0 --port $PORT` (Railway provides the `$PORT` environment variable dynamically).
 4. Navigate to the **Variables** tab and add the production credentials:
    - `OPENAI_API_KEY`: *[Your OpenAI API Key]*
-   - `PUSHOVER_USER`: *[Your Pushover User Key]*
-   - `PUSHOVER_TOKEN`: *[Your Pushover App/API Token]*
+   - `DISCORD_WEBHOOK_LEADS`: *[Your Discord Leads Webhook URL]*
+   - `DISCORD_WEBHOOK_UNKNOWN`: *[Your Discord Unknown Questions Webhook URL]*
+   - `DISCORD_WEBHOOK_CHAT_IO`: *[Your Discord Chat I/O Webhook URL]*
    - `ALLOWED_ORIGINS`: `https://tylerlammey.com,https://www.tylerlammey.com` (Secures your backend so only requests originating from your portfolio site are allowed).
 5. Under **Settings** > **Domains**, Railway will provide a default domain (e.g., `https://backend-production.up.railway.app`). Keep this URL handy for the frontend step.
 
@@ -103,7 +104,7 @@ To map the custom domain `tylerlammey.com` and its subdomain `api.tylerlammey.co
 | **Backend** | Railway | Hobby / Developer Plan | **~$5.00** (or usage-based) |
 | **SSL / HTTPS** | Let's Encrypt | Automatic via hosts | **$0** |
 | **AI LLM Queries** | OpenAI API | Pay-as-you-go (`gpt-4o-mini`) | **~$1 - $3** (traffic dependent) |
-| **Notifications** | Pushover API | One-time license per device | **$0** |
+| **Notifications** | Discord Webhooks | Fully free & unlimited | **$0** |
 
 ---
 

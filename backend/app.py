@@ -1,10 +1,10 @@
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import AsyncOpenAI
 import json
 import os
-import requests
-from pypdf import PdfReader
-from fastapi import FastAPI, HTTPException
+import inspect
+import httpx
+from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -14,28 +14,86 @@ from typing import List, Dict
 
 load_dotenv(override=True)
 
-def push(text):
+def truncate_field_value(val: str, max_len: int = 1000) -> str:
+    """Helper to truncate Discord embed field values to avoid Discord API errors."""
+    if not val:
+        return "N/A"
+    return val[:max_len] + "..." if len(val) > max_len else val
+
+async def send_discord_webhook(webhook_url: str, title: str, description: str, color: int, fields: list = None):
+    """Sends a rich formatted embed message to a Discord channel webhook asynchronously."""
+    if not webhook_url or "PASTE_YOUR" in webhook_url:
+        print(f"Discord webhook URL not configured/placeholder for: {title}", flush=True)
+        return
+        
+    embed = {
+        "title": title,
+        "description": description,
+        "color": color,
+    }
+    
+    if fields:
+        embed["fields"] = fields
+        
+    payload = {
+        "embeds": [embed]
+    }
+    
     try:
-        requests.post(
-            "https://api.pushover.net/1/messages.json",
-            data={
-                "token": os.getenv("PUSHOVER_TOKEN"),
-                "user": os.getenv("PUSHOVER_USER"),
-                "message": text,
-            },
-            timeout=3.0
-        )
+        async with httpx.AsyncClient() as client:
+            response = await client.post(webhook_url, json=payload, timeout=5.0)
+            if response.status_code >= 400:
+                print(f"Discord Webhook returned error {response.status_code}: {response.text}", flush=True)
     except Exception as e:
-        print(f"Failed to send Pushover alert: {e}", flush=True)
+        print(f"Failed to send Discord alert: {e}", flush=True)
 
-
-def record_user_details(email, name="Name not provided", notes="not provided"):
-    push(f"Recording {name} with email {email} and notes {notes}")
+async def record_user_details(email, name="Name not provided", notes="not provided"):
+    webhook_url = os.getenv("DISCORD_WEBHOOK_LEADS")
+    fields = [
+        {"name": "Email", "value": truncate_field_value(email), "inline": True},
+        {"name": "Name", "value": truncate_field_value(name), "inline": True},
+        {"name": "Notes", "value": truncate_field_value(notes), "inline": False}
+    ]
+    await send_discord_webhook(
+        webhook_url=webhook_url,
+        title="📥 New Contact Capture (Lead)",
+        description="A user has expressed interest in contacting you.",
+        color=3066993, # Green
+        fields=fields
+    )
     return {"recorded": "ok"}
 
-def record_unknown_question(question):
-    push(f"Recording {question}")
+async def record_unknown_question(question):
+    webhook_url = os.getenv("DISCORD_WEBHOOK_UNKNOWN")
+    fields = [
+        {"name": "Question", "value": truncate_field_value(question), "inline": False}
+    ]
+    await send_discord_webhook(
+        webhook_url=webhook_url,
+        title="❓ Unknown Question Encountered",
+        description="The AI agent encountered a question it could not answer from the context.",
+        color=15105570, # Orange
+        fields=fields
+    )
     return {"recorded": "ok"}
+
+async def log_chat_io(user_message: str, assistant_response: str, tools_called: list):
+    webhook_url = os.getenv("DISCORD_WEBHOOK_CHAT_IO")
+    tools_str = ", ".join(tools_called) if tools_called else "None"
+    
+    fields = [
+        {"name": "💬 User Prompt", "value": truncate_field_value(user_message), "inline": False},
+        {"name": "🤖 Assistant Response", "value": truncate_field_value(assistant_response), "inline": False},
+        {"name": "🛠️ Tools Invoked", "value": truncate_field_value(tools_str), "inline": True}
+    ]
+    
+    await send_discord_webhook(
+        webhook_url=webhook_url,
+        title="📝 Conversation Exchange Logged",
+        description="A full conversation turn has completed.",
+        color=3447003, # Blue
+        fields=fields
+    )
 
 record_user_details_json = {
     "name": "record_user_details",
@@ -64,13 +122,13 @@ record_user_details_json = {
 
 record_unknown_question_json = {
     "name": "record_unknown_question",
-    "description": "Always use this tool to record any question that couldn't be answered as you didn't know the answer",
+    "description": "CRITICAL: Call this tool immediately when the visitor asks about topics NOT covered in the background context below (e.g. salary, off-topic, personal preferences, or details missing from context). Do not attempt to guess or answer without calling this tool.",
     "parameters": {
         "type": "object",
         "properties": {
             "question": {
                 "type": "string",
-                "description": "The question that couldn't be answered"
+                "description": "The exact question that cannot be answered from the background context"
             },
         },
         "required": ["question"],
@@ -88,7 +146,7 @@ TOOL_REGISTRY = {
 
 class Me:
     def __init__(self):
-        self.openai = OpenAI()
+        self.openai = AsyncOpenAI()
         self.name = "Tyler Lammey"
         
         base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -109,10 +167,10 @@ class Me:
         - Be concise. Avoid filler, flattery, and unnecessary elaboration.
         - Use bullet points when listing skills, tools, or project details. Use prose for conversational answers.
         - Do not exaggerate, invent, or infer anything not present in the background context below.
-        - If a question cannot be answered from the context, call `record_unknown_question` and let the visitor know you don't have that information.
+        - CRITICAL RULE FOR UNKNOWN QUESTIONS: If a question cannot be fully and accurately answered using ONLY the background context below (including questions about salary/compensation, personal details, or off-topic questions), you MUST call the `record_unknown_question` tool.
+        - RESPONSE FORMAT FOR UNKNOWN QUESTIONS: After calling `record_unknown_question`, your response to the user must notify them that you do not know the answer and will ask Tyler (e.g., "I don't have that information right now, but I have recorded your question and will ask Tyler about it!"). Do not make up answers or politely redirect to other topics without calling this tool and letting the user know you will ask Tyler.
         - Do not proactively encourage contact. Only suggest reaching out — and call `record_user_details` — if the visitor explicitly expresses interest in hiring, collaboration, or a situation that warrants follow-up.
         - Keep experiences, achievements, and projects strictly mapped to the specific company under which they are listed in the context. Do not transpose, combine, or cross-attribute projects from one company/internship to another (specifically, do not attribute accomplishments from Scientific Research Corporation or ATS to Raytheon).
-        - If asked about topics unrelated to your professional background, politely redirect the conversation.
         - If a visitor asks for your contact info (email, LinkedIn, or phone number), provide it from the context. If you share the phone number, always add that text is preferred.
 
         BACKGROUND CONTEXT:
@@ -122,7 +180,7 @@ class Me:
         """
         return prompt
 
-    def chat(self, message, history):
+    async def chat(self, message, history, session_info):
         MAX_HISTORY = 30  # last 15 exchanges
         messages = [{"role": "system", "content": self.system_prompt_text}] + history[-MAX_HISTORY:] + [{"role": "user", "content": message}]
         
@@ -130,7 +188,7 @@ class Me:
         full_response_text = ""
 
         while True:
-            response = self.openai.chat.completions.create(
+            response = await self.openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=messages,
                 tools=tools,
@@ -141,7 +199,7 @@ class Me:
             tool_calls = []
             finish_reason = None
 
-            for chunk in response:
+            async for chunk in response:
                 delta = chunk.choices[0].delta
 
                 if delta.content:
@@ -186,7 +244,14 @@ class Me:
                 tool = TOOL_REGISTRY.get(tool_name)
 
                 try:
-                    result = tool(**arguments) if tool else {"error": "Tool not found"}
+                    if tool:
+                        if inspect.iscoroutinefunction(tool):
+                            result = await tool(**arguments)
+                        else:
+                            result = tool(**arguments)
+                        session_info["tools_called"].append(tool_name)
+                    else:
+                        result = {"error": "Tool not found"}
                 except Exception as e:
                     result = {"error": f"Failed to execute: {str(e)}"}
 
@@ -228,7 +293,7 @@ class ChatRequest(BaseModel):
     messages: List[Dict[str, str]]
 
 @app.post("/api/chat")
-async def chat_endpoint(request: ChatRequest):
+async def chat_endpoint(request: ChatRequest, background_tasks: BackgroundTasks):
     if not request.messages:
         raise HTTPException(status_code=400, detail="Messages list cannot be empty")
         
@@ -248,15 +313,27 @@ async def chat_endpoint(request: ChatRequest):
             "content": m.get("content")
         })
 
-    def event_generator():
+    session_info = {"tools_called": []}
+
+    async def event_generator():
         last_len = 0
+        full_response_text = ""
         try:
-            # me.chat returns a generator yielding cumulative turn text.
-            for response_text in me.chat(message, history):
+            # me.chat returns an async generator yielding cumulative turn text.
+            async for response_text in me.chat(message, history, session_info):
                 delta = response_text[last_len:]
                 last_len = len(response_text)
                 if delta:
+                    full_response_text += delta
                     yield delta
+            
+            # Streaming completed successfully, run the chat I/O logger as a background task
+            background_tasks.add_task(
+                log_chat_io,
+                user_message=message,
+                assistant_response=full_response_text,
+                tools_called=session_info["tools_called"]
+            )
         except Exception as e:
             # Log the full traceback or error message to the server console
             print(f"Error during streaming: {str(e)}", flush=True)

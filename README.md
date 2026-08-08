@@ -15,7 +15,7 @@ This repository contains the codebase for my personal portfolio website. The pro
 * **Core**: Python and FastAPI
 * **AI Engine**: OpenAI API (`gpt-4o-mini`) using streaming completions
 * **Context Layer**: Structured local database (`backend/me/context.md`) serving as the source of truth for the AI agent
-* **Telemetry**: Integrated Pushover API notifications to log contact requests and visitor feedback
+* **Telemetry**: Integrated Discord Webhooks to log user leads, unknown questions, and general conversation transcripts (I/O) to separate channels
 
 ---
 
@@ -43,9 +43,10 @@ Navigate to the `/backend` directory:
 3. Create a `.env` file in the `/backend` directory and insert your credentials:
    ```env
    OPENAI_API_KEY=your_openai_api_key_here
-   # Optional:
-   PUSHOVER_TOKEN=your_pushover_app_token
-   PUSHOVER_USER=your_pushover_user_key
+    # Webhooks:
+    DISCORD_WEBHOOK_LEADS=your_discord_leads_channel_webhook_url
+    DISCORD_WEBHOOK_UNKNOWN=your_discord_unknown_questions_channel_webhook_url
+    DISCORD_WEBHOOK_CHAT_IO=your_discord_chat_io_channel_webhook_url
    ```
 4. Start the FastAPI application:
    ```bash
