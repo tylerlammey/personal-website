@@ -1008,6 +1008,14 @@ const css = `
 // ─── Data (edit these to personalize) ─────────────────────────────────────────
 const PROJECTS = [
   {
+    icon: "🛰️",
+    title: "Dynamic Geospatial Object Search",
+    desc: "A C++/Python satellite imagery search system that detects arbitrary objects from text or reference images using embeddings, ANN search, VLM verification, and on-demand imagery retrieval.",
+    tags: ["C++", "Python", "Embeddings", "VLMs"],
+    demo: "",
+    code: "https://github.com/tylerlammey/Dynamic-Geospatial-Object-Search",
+  },
+  {
     icon: "🤖",
     title: "TylerGPT AI Agent",
     desc: "A conversational AI assistant integrated directly into this portfolio page. Combines a React frontend streaming parser with a FastAPI backend acting as a context-aware resume agent.",
@@ -1030,14 +1038,6 @@ const PROJECTS = [
     tags: ["Quantum Computing", "NMR", "Academic Research"],
     demo: "/nmr_qubits_paper.pdf",
     code: "",
-  },
-  {
-    icon: "⚓",
-    title: "UTUX Underwater Exploration Website",
-    desc: "Developed the entire backend API and collaborated on the frontend interface for the University of Toronto Underwater Exploration (UTUX) student design club website.",
-    tags: ["FastAPI", "React", "SQL", "Web API"],
-    demo: "",
-    code: "https://github.com/U-of-T-Underwater-Exploration/website",
   },
 ];
 

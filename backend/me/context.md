@@ -98,7 +98,7 @@ I'm most interested in:
 ## Technical Skills
 * **Programming Languages:** Python, C++, MATLAB, C, JavaScript, TypeScript, HTML, SQL, Bash
 * **Software & Frameworks:** Linux, Angular, FastAPI, Google Cloud Platform (GCP), Arduino, LTSpice, Siemens NX, Git, React, OpenCV, NumPy, Pandas, Matplotlib, Docker, REST APIs, PyTorch, Hugging Face, Jupyter Notebooks
-* **AI/ML:** Deep Learning, Object Detection & Segmentation (SAM), OpenAI API, LLM Tool Calling, Prompt Engineering
+* **AI/ML:** Deep Learning, Object Detection & Segmentation (SAM), OpenAI API, LLM Tool Calling, Prompt Engineering, Vector Search, Vision-Language Models (VLMs), Image Embeddings
 * **Core Competencies:** RF/Radar Engineering, Embedded Systems, IoT, Network Testing (TCP/UDP), Waveform Analysis, Automation, SCPI, Ethernet, SPI, PWM
 * **Clearance:** Secret clearance
 
@@ -205,6 +205,19 @@ I'm most interested in:
 ---
 
 ## Projects
+
+### Dynamic Geospatial Object Search
+* **Status / Timeline:** In Progress (Fall 2026) | Capstone / Independent Project
+* **Technologies:** C++, Python, Vector Embeddings, Approximate Nearest Neighbor (ANN) Search, Vision-Language Models (VLMs), Computer Vision, Satellite / Geospatial Imagery
+* **Overview:** Satellite imagery is widely available, but many object search systems are limited to a fixed set of pre-trained object classes. This project builds a system that enables users to dynamically search satellite imagery for arbitrary objects specified through text descriptions, reference images, or both, with optional physical size constraints and geographic regions, plotting candidate detections on an interactive map.
+* **Architecture & Multi-Stage Retrieval Pipeline:**
+  - **Offline Tiling & Embedding:** Ingests satellite imagery and embeds tiles offline using a domain-adapted image embedding model.
+  - **Zero Raw-Imagery Storage:** Raw imagery is discarded after embedding to eliminate massive storage requirements; only compact vector embeddings and metadata (imagery identifiers and pixel windows) are stored.
+  - **Runtime Query & Fast ANN Retrieval:** At query time, the user's text and/or reference image is embedded and used for Approximate Nearest Neighbor (ANN) search across stored embeddings to identify candidate tiles.
+  - **On-Demand Pixel Re-Fetching:** Candidate tiles are re-fetched on demand from public satellite imagery sources using the stored identifiers and pixel windows.
+  - **Two-Stage VLM Verification & Grounding:** Re-fetched tiles pass through a fast small-VLM filtering stage followed by a larger VLM verification and grounding stage, outputting high-confidence bounding boxes.
+  - **Physical Size Estimation:** Calculates estimated physical dimensions of detected objects from bounding box pixel dimensions and the satellite imagery's ground sampling distance (GSD).
+  - **Systems & Hardware Efficiency:** Built to run entirely locally on a standard desktop computer equipped with a consumer GPU (16 GB VRAM) using open-weight pretrained models (no training required for v1). High-throughput systems components (imagery tiling, spatial queries, ANN indexing, on-demand pixel retrieval, geometry, and orchestration) are implemented in C++, paired with a Python ML inference service and interactive map UI.
 
 ### TylerGPT (AI Portfolio Agent)
 * **Technologies:** Python, FastAPI, React, OpenAI API

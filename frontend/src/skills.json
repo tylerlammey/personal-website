@@ -131,6 +131,14 @@
       {
         "name": "Prompt Engineering",
         "proficiency": "project"
+      },
+      {
+        "name": "Vector Search & Embeddings",
+        "proficiency": "project"
+      },
+      {
+        "name": "VLMs",
+        "proficiency": "project"
       }
     ]
   },
