@@ -13,7 +13,7 @@ This repository contains the codebase for my personal portfolio website. The pro
 
 ### Backend
 * **Core**: Python and FastAPI
-* **AI Engine**: OpenAI API (`gpt-4o-mini`) using streaming completions
+* **AI Engine**: OpenAI API (`gpt-6-luna`) using streaming Chat Completions with `reasoning_effort="none"` for function calling
 * **Context Layer**: Structured local database (`backend/me/context.md`) serving as the source of truth for the AI agent
 * **Telemetry**: Integrated Discord Webhooks to log user leads, unknown questions, and general conversation transcripts (I/O) to separate channels
 

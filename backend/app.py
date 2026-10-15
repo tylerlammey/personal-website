@@ -189,7 +189,9 @@ class Me:
 
         while True:
             response = await self.openai.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-6-luna",
+                # Required for Luna function calling through Chat Completions.
+                reasoning_effort="none",
                 messages=messages,
                 tools=tools,
                 stream=True

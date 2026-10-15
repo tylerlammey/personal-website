@@ -16,7 +16,7 @@ graph TD
     DNS[DNS Registrar]
     Vercel[Vercel Global CDN<br>React Frontend]
     Railway[Railway Cloud Container<br>FastAPI Backend]
-    OpenAI[OpenAI API<br>gpt-4o-mini]
+    OpenAI[OpenAI API<br>gpt-6-luna]
     Discord[Discord Webhooks API]
 
     Client -->|DNS Lookup: tylerlammey.com| DNS
@@ -103,8 +103,10 @@ To map the custom domain `tylerlammey.com` and its subdomain `api.tylerlammey.co
 | **Frontend** | Vercel | Hobby Tier | **$0** |
 | **Backend** | Railway | Hobby / Developer Plan | **~$5.00** (or usage-based) |
 | **SSL / HTTPS** | Let's Encrypt | Automatic via hosts | **$0** |
-| **AI LLM Queries** | OpenAI API | Pay-as-you-go (`gpt-4o-mini`) | **~$1 - $3** (traffic dependent) |
+| **AI LLM Queries** | OpenAI API | Pay-as-you-go (`gpt-6-luna`) | **Usage-based** (traffic and token dependent) |
 | **Notifications** | Discord Webhooks | Fully free & unlimited | **$0** |
+
+GPT-6 Luna uses `reasoning_effort="none"` to support function calling through Chat Completions. Standard text rates are **$0.10 per million input tokens** and **$0.50 per million output tokens**, before caching and other billing adjustments. See the [model documentation](https://developers.openai.com/api/docs/models/gpt-6-luna) for current pricing and compatibility.
 
 ---
 
